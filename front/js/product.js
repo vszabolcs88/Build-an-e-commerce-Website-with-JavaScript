@@ -37,7 +37,9 @@ function getChosenProduct() {
             $event.preventDefault();
             
             if(checkQuantity(getQty) && getColor()) {
-                addProductsToArray(data)
+                addProductsToArray(data);
+                alert("Product has added to the cart!");
+                window.location.href = 'http://127.0.0.1:5500/front/html/index.html';
             } else {
                 //display error message
                 alert("Choose a colour and quantity!");
@@ -87,6 +89,9 @@ const addProductsToArray = (data) => {
         name: data.name,
         imageAltTxt: data.altTxt,
     }
+
+    console.log(cartProducts);
+    console.log(addedProduct);
     
     
     if(cartProducts != null || cartProducts != undefined) {

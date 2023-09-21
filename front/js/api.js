@@ -9,10 +9,3 @@ async function apiCall(endpoint = API_ENDPOINT) {
         alert ("an error occured sorry")
     }
 }
-
-
-   // fetch('http://localhost:3000/api/products')
-    // .then(function(response) {
-    //     return response.json();
-    // })
-    // .then(function(data) {
