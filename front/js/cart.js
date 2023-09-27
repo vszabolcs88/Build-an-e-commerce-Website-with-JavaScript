@@ -16,32 +16,49 @@ const emptyCart = () => {
 }
 
 //return the data
-const apiData = async () => {
-    let data = await apiCall();
-    return data;
-}
+// const apiData = async () => {
+//     let data = await apiCall();
+//     //console.log(data);
+//     return data;
+// }
 
 //find the price of the product using the product id
-const productPrice = async (id) => {
-        await apiData()
-        .then(data => {
-            for (i = 0; i < array.length; i++) {
-                let elmt = data.find((emt => emt._id == id));
-                price= elmt.price;
-                console.log("The price  is ", price);
-                return price;
-            }
-        });
-}
+// const productPrice = async (id) => {
+    // try {
+    //     let data = await apiData();
+
+    //     for (i = 0; i < array.length; i++) {
+    //         let elmt = data.find((emt => emt._id == id));
+    //         price= elmt.price;
+    //         console.log("The price  is ", price);
+    //         return price;
+    //     }
+    // } catch(error) {
+    //     console.log(error);
+    // }
+//         await apiData()
+//         .then(data => {
+//             for (i = 0; i < array.length; i++) {
+//                 let elmt = data.find((emt => emt._id == id));
+//                 price= elmt.price;
+//                 console.log("The price  is ", price);
+//                 return price;
+//             }
+//         });
+// }
+
 
 //Use the HTML template to add the product details
 async function createAndSetAttributesLoop (products) {
-    let response = await apiData();
+    let response = await apiCall();
+    //console.log(response);
     for (let product of  products) {
         let section = document.getElementById("cart__items")
         let template = document.getElementById('cart-template').content;
         let cartTemplate = document.importNode(template, true);
-        let prod = response.find(elmt => elmt._id === product.id)
+        console.log(product);
+        console.log(product.id);
+        let prod = response.find(elmt => elmt._id === product.id);
         let price = prod.price;
 
         cartTemplate.querySelector(".cart__item").dataset.id = product.id;
@@ -71,7 +88,6 @@ const deleteItem = () => {
                 array.splice(index, index);
                 localStorage.setItem("cart", JSON.stringify(array));
                 window.location.reload();
-
         });
     });
 }
@@ -93,7 +109,6 @@ const changeQuantity = () => {
 //Calculate the total quantity:
 const calctotalQuantity = () => {
     let total = 0;
-    
     for (let i = 0; i < array.length; i++) {
         total += Number(array[i].quantity);
     }
@@ -103,7 +118,7 @@ const calctotalQuantity = () => {
 //Calculate the total price:
 const calcTotalPrice = async () => {
     let total = 0;
-    let response = await apiData();
+    let response = await apiCall();
 
     for (let i = 0; i < array.length; i++ ){
         let prod = response.find(elmt => elmt._id === array[i].id)
@@ -118,8 +133,7 @@ const loadCartProducts = async () => {
     deleteItem();
     changeQuantity();
     calctotalQuantity();
-    calcTotalPrice();
-
+    await calcTotalPrice();
 }
 loadCartProducts();
 
@@ -214,29 +228,34 @@ async function apiPost(options) {
 }
 
 //Submit form and products:
-const sendPost = () => {
-    form.addEventListener('submit', (e) => {
+const sendPost = async () => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        let products=  arrayIds;    //array of product ids
-        
-        const contact = {           //contact object
-            firstName: firstName.value,
-            lastName: lastName.value,
-            address: address.value,
-            city: city.value,
-            email: email.value,
-        };
-        
-        const options = {           //create post object
-            method: 'POST',
-            headers: {
-            "content-type": "application/json; charset=utf-8",
-            },
-            body: JSON.stringify({contact, products}),
+        try {
+            let products=  arrayIds;    //array of product ids
+
+            const contact = {           //contact object
+                firstName: firstName.value,
+                lastName: lastName.value,
+                address: address.value,
+                city: city.value,
+                email: email.value,
             };
-    
-        apiPost(options);
-    })
+            
+            const options = {           //create post object
+                method: 'POST',
+                headers: {
+                "content-type": "application/json; charset=utf-8",
+                },
+                body: JSON.stringify({contact, products}),
+                };
+        
+            await apiPost(options);
+
+        } catch(error) {
+            console.error('An error occurred while sending your order:', error);
+        };
+    });
 }
 
 sendPost();

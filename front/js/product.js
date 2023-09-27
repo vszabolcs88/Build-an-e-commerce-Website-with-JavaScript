@@ -1,18 +1,19 @@
-function getId() {
+//Retrieve the value of id:
+const getId = () => {
     let searchParams = new URLSearchParams(window.location.search);
     return searchParams.get('id');
 }
-
-function getQty() {
+//Retrieve quantity from input field:
+const getQty = () => {
     return Number(document.getElementById('quantity').value)
 }
-
-function getColor () {
+//Retrieve colour from input field:
+const getColor = () => {
     return document.getElementById('colors').value;
 }
 
-//Create HTML elements
-function createProductElements() {
+//Create HTML elements and return them as an object:
+const createProductElements = () => {
     const itemImg = document.querySelector('.item__img');
     const itemPrice = document.getElementById('price');
     const itemName = document.getElementById('title');
@@ -26,9 +27,9 @@ function createProductElements() {
 }
 
 //Assign the data values to the HTML elements
-function getChosenProduct() {
+const getChosenProduct = async () => {
     
-    apiCall(API_ENDPOINT+getId())
+    await apiCall(API_ENDPOINT+getId())
     .then(function(data) {
         
         bindDataToElmts(data, createProductElements());
@@ -39,7 +40,7 @@ function getChosenProduct() {
             if(checkQuantity(getQty) && getColor()) {
                 addProductsToArray(data);
                 alert("Product has added to the cart!");
-                window.location.href = 'http://127.0.0.1:5500/front/html/index.html';
+                window.location.href = `../html/index.html`
             } else {
                 //display error message
                 alert("Choose a colour and quantity!");
@@ -50,7 +51,7 @@ function getChosenProduct() {
 }
 
 
-function bindDataToElmts(data, object) {
+const bindDataToElmts = (data, object) => {
     const {itemImg, itemPrice, itemName, itemDescription, itemSelect, addingButton, quantity, chosenProductImg} = object;
     for ( let i = 0; i < data.colors.length; i++) {
         const colorOption = document.createElement('option');
@@ -70,7 +71,7 @@ function bindDataToElmts(data, object) {
     itemImg.appendChild(chosenProductImg);
 }
 
-function checkQuantity() {
+const checkQuantity = () => {
     if(getQty() <= 0 || getQty() > 100) {
         return false;
     } else { return true}
@@ -90,14 +91,10 @@ const addProductsToArray = (data) => {
         imageAltTxt: data.altTxt,
     }
 
-    console.log(cartProducts);
-    console.log(addedProduct);
-    
-    
     if(cartProducts != null || cartProducts != undefined) {
         let res = cartProducts.find(elmt => elmt.id == addedProduct.id && elmt.color == addedProduct.color )
         if(res != undefined) {
-            res.quantity = getQty()
+            res.quantity += getQty()
             localStorage.setItem("cart", JSON.stringify(cartProducts))
         } else {
             cartProducts.push(addedProduct)
@@ -109,6 +106,22 @@ const addProductsToArray = (data) => {
        cartProducts.push(addedProduct)
        localStorage.setItem("cart",JSON.stringify(cartProducts))
     }
+    console.log(cartProducts);
+
+    // if(cartProducts != null || cartProducts != undefined) {
+    //     for (x in cartProducts) {
+    //         if(cartProducts[x].id = addedProduct.id && cartProducts[x].color == addedProduct.color) {
+    //             cartProducts[x].quantity += addedProduct.quantity;
+    //             console.log(cartProducts);
+    //         }
+    //     } 
+    //     localStorage.setItem("cart", JSON.stringify(cartProducts));
+       
+    // } else {
+    //    let cartProducts = [];
+    //    cartProducts.push(addedProduct);
+    //    localStorage.setItem("cart",JSON.stringify(cartProducts));
+    // }
     //cartProducts.push(addedProduct);
     quantity.value = 0;
 }
