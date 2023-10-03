@@ -50,7 +50,7 @@ const getChosenProduct = async () => {
     .catch(error => { console.error(error)})
 }
 
-
+//Creates HTML elements for each product:
 const bindDataToElmts = (data, object) => {
     const {itemImg, itemPrice, itemName, itemDescription, itemSelect, addingButton, quantity, chosenProductImg} = object;
     for ( let i = 0; i < data.colors.length; i++) {
